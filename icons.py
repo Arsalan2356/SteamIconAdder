@@ -25,7 +25,7 @@ if ("-l" in args):
 else:
 	log = False
 
-games = __file__[0:__file__.rfind("/")]
+games = "/mnt/g/Games"
 os.chdir(games)
 non_steam_games_yml = ["league-of-legends", "overwatch 2"]
 non_steam_games = ["AAGL", "LoL", "Overwatch", "HSRL"]
@@ -74,7 +74,7 @@ def fc(e : os.DirEntry):
 			return name.lower()
 
 def cond(e : os.DirEntry):
-	if e.name == ".directory":
+	if e.name[0] == ".":
 		return False
 
 	for i in non_steam_games_yml:
