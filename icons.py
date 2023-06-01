@@ -1,6 +1,5 @@
 import difflib
 from io import BytesIO
-from multiprocessing import Pool
 import sys
 import time
 from typing import List
@@ -10,7 +9,7 @@ import pexpect
 from PIL import Image
 import warnings
 from threading import Lock
-from concurrent.futures import ThreadPoolExecutor, _base, as_completed
+from concurrent.futures import ThreadPoolExecutor, _base
 
 warnings.filterwarnings("ignore")
 
@@ -20,6 +19,11 @@ if ("-v" in args):
 	verbose = True
 else:
 	verbose = False
+
+if ("-l" in args):
+	log = True
+else:
+	log = False
 
 games = __file__[0:__file__.rfind("/")]
 os.chdir(games)
@@ -208,7 +212,10 @@ def mod_seq(e : tuple[int, tuple[str, tuple[str, str]]]):
 		print(f"({k}) ID : {game_id}")
 		print(f"({k}) Requesting App Icon Info from SteamCMD")
 	child = pexpect.spawn("steamcmd", encoding="utf-8", timeout = None)
-	# child.logfile_read = sys.stdout
+
+	if log:
+		child.logfile_read = sys.stdout
+	
 	child.expect("Loading Steam API...OK")
 	child.sendline("login anonymous")
 	child.expect("Waiting for user info...OK")
@@ -250,17 +257,6 @@ def mod_seq(e : tuple[int, tuple[str, tuple[str, str]]]):
 	img.save(f"/home/rc/.local/share/icons/hicolor/128x128/apps/lutris_{j[1]}.png")
 	progress[k - 1] = 1
 	write(progress)
-
-
-
-# start = time.time()
-
-# with Pool(processes = 32) as p:
-# 	p.map(mod, matches_numbered)
-
-# end = time.time()
-# print(f"Exec time : {end - start}")
-
 
 start = time.time()
 
